@@ -8,8 +8,10 @@ class Anchor(object):
         self.x = x
         self.y = y
         
-    def measure(self,position:np.array)->float:
+    def measure(self,position:np.array, nominal:bool=False)->float:
         noise = np.random.normal(0,self.d)
+        if nominal:
+            noise = 0   
         distance = np.linalg.norm(position - np.array([self.x,self.y])) + noise
         return distance
     
