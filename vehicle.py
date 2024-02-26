@@ -9,7 +9,10 @@ class Vehicle(object):
         self.z = z
         self.theta = theta
     
-    def step(self, input:np.array):
+    def step(self, input:np.array)->None:
         self.x = self.x + input[0]*np.cos(self.theta)*self.ts
         self.y = self.y + input[0]*np.sin(self.theta)*self.ts
         self.theta = self.theta + self.ts * input[1]
+        
+    def state(self)->np.array:
+        return np.array([[self.x],[self.y],[self.z]])
