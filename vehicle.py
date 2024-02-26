@@ -3,9 +3,10 @@ class Vehicle(object):
     # サンプリング時間
     ts = 0.1
 
-    def __init__(self, x:float, y:float, theta:float)->None:
+    def __init__(self, x:float, y:float,z:float ,theta:float)->None:
         self.x = x
         self.y = y
+        self.z = z
         self.theta = theta
     
     def step(self, input:np.array):
