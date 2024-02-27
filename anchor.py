@@ -7,17 +7,15 @@ class Anchor(object):
     def __init__(self, x:float,y:float,z:float)->None:
         self.x = x
         self.y = y
-        self.z = z        
+        self.z = z
+        self.position =  np.array([[self.x],[self.y],[self.z]])   
     
     def measure(self,position:np.array, nominal:bool=False)->float:
         noise = np.random.normal(0,self.d)
         if nominal:
-            noise = 0   
-        distance = np.linalg.norm(position - np.array([self.x,self.y,self.z]))*(1 + noise)
+            noise = 0
+        distance = np.linalg.norm(self.position - position)*(1 + noise)
         return distance
-    
-    def state(self)->np.array:
-        return np.array([[self.x],[self.y],[self.z]])
     
 #################################################
 if __name__ == '__main__':

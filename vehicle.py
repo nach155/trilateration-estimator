@@ -1,4 +1,5 @@
 import numpy as np
+
 class Vehicle(object):
     # サンプリング時間
     ts = 0.1
@@ -15,4 +16,7 @@ class Vehicle(object):
         self.theta = self.theta + self.ts * input[1]
         
     def state(self)->np.array:
+        return np.array([[self.x],[self.y],[self.theta]])
+    
+    def position(self)->np.array:
         return np.array([[self.x],[self.y],[self.z]])
