@@ -68,7 +68,7 @@ class TrilaterationEstimator(object):
         pr = 0
         for anchor, distance in zip(self.anchor_list, distance_list):
             pr = pr - anchor.position.T @ anchor.position + distance**2
-        qTq = pr / self.N + self.c.T @ self.c
+        qTq = np.squeeze(pr / self.N + self.c.T @ self.c)
         
         j = np.squeeze((U[0,1]*V[1])/(U[0,0]*U[1,1]) - (V[0]/U[0,0]))
         k = np.squeeze((U[0,1]*U[1,2])/(U[0,0]*U[1,1]) - (U[0,2]/U[0,0]))
@@ -76,15 +76,15 @@ class TrilaterationEstimator(object):
         l = np.squeeze(V[1]/U[1,1])
         m = np.squeeze(U[1,2]/U[1,1])
         
-        a = np.squeeze(k**2 + m**2 + 1)
-        b = np.squeeze(j*k + l*m)
-        c = np.squeeze(j**2 + l**2 - qTq)
+        a = k**2 + m**2 + 1
+        b = j*k + l*m
+        c = j**2 + l**2 - qTq
         
         D = b**2 - a*c
         if abs(D) <= 0.00001:
             D = 0
         q3_m = (-b - np.sqrt(D))/a
-        q3_p = (-b + np.sqrt(D))/a
+        # q3_p = (-b + np.sqrt(D))/a
         
         q_m = np.array([[j + k*q3_m],[-l-m*q3_m],[q3_m]])
         # q_p = np.array([[j + k*q3_p],[-l-m*q3_p],[q3_p]])
