@@ -8,7 +8,7 @@ class TrilaterationEstimator(object):
         self.__calc_c__()
         self.__calc_H__()
         
-    def __calc_a__(self,distance_list:list[float])->np.array:
+    def __calc_a__(self,distance_list:list[float])->np.ndarray:
         a = np.zeros(())
         for anchor, distance in zip(self.anchor_list, distance_list):
             anchor_position = anchor.position
@@ -17,7 +17,7 @@ class TrilaterationEstimator(object):
         self.a = a
         return a
     
-    def __calc_B__(self,distance_list)->np.array:
+    def __calc_B__(self,distance_list)->np.ndarray:
         B = np.zeros(())
         for anchor, distance in zip(self.anchor_list,distance_list):
             anchor_position = anchor.position()
@@ -26,7 +26,7 @@ class TrilaterationEstimator(object):
         self.B = B
         return B
     
-    def __calc_a_B__(self,distance_list)->tuple[np.array,np.array]:
+    def __calc_a_B__(self,distance_list)->tuple[np.ndarray,np.ndarray]:
         a = np.zeros(())
         B = np.zeros(())
         for anchor, distance in zip(self.anchor_list,distance_list):
@@ -37,19 +37,19 @@ class TrilaterationEstimator(object):
         self.B = B / self.N
         return (self.a, self.B)
 
-    def __calc_c__(self)->np.array:
+    def __calc_c__(self)->np.ndarray:
         self.c = sum([anchor.position for anchor in self.anchor_list])/self.N
         return self.c
 
-    def __calc_f__(self)->np.array:
+    def __calc_f__(self)->np.ndarray:
         self.f = self.a  + self.B @ self.c + 2 * self.c @ self.c.T @ self.c
         return self.f
     
-    def __calc_D__(self)->np.array:
+    def __calc_D__(self)->np.ndarray:
         self.D = self.B + 2 * self.c @ self.c.T + (self.c.T @ self.c) * np.eye(3)
         return self.D
     
-    def __calc_H__(self)->np.array:
+    def __calc_H__(self)->np.ndarray:
         # self._calc_D()
         h = np.zeros(())
         for anchor in self.anchor_list:
@@ -58,7 +58,7 @@ class TrilaterationEstimator(object):
         self.H = - 2 * h / self.N + 2 * self.c @ self.c.T
         return self.H
     
-    def __calc_position__(self,distance_list:list[float])->np.array:
+    def __calc_position__(self,distance_list:list[float])->np.ndarray:
         f_d = (self.f - self.f[-1])[:-1]
         H_d = (self.H - self.H[-1])[:-1]
         
@@ -81,6 +81,8 @@ class TrilaterationEstimator(object):
         c = j**2 + l**2 - qTq
         
         D = b**2 - a*c
+        if D < 0:
+            raise TrilaterationException("Could not calculate q3.")
         if abs(D) <= 0.00001:
             D = 0
         q3_m = (-b - np.sqrt(D))/a
@@ -91,13 +93,17 @@ class TrilaterationEstimator(object):
         
         return q_m + self.c
     
-    def estimate(self,distance_list):
+    def estimate(self,distance_list)->np.ndarray:
         self.__calc_a_B__(distance_list)
         self.__calc_f__()
-        if np.linalg.det(self.H) == 0:
-            return self.__calc_position__(distance_list)
-        else:
-            return - np.linalg.inv(self.H) @ self.f + self.c
+        # if np.linalg.det(self.H) == 0:
+        #     return self.__calc_position__(distance_list)
+        # else:
+        #     return - np.linalg.inv(self.H) @ self.f + self.c
+        return self.__calc_position__(distance_list)
+    
+class TrilaterationException(Exception):
+    pass
 #################################################
 if __name__ == '__main__':
     estimator = TrilaterationEstimator([Anchor(0,2,3),Anchor(3,0,3),Anchor(5,4,3),Anchor(0,0,3)])

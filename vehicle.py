@@ -15,7 +15,7 @@ class Vehicle(object):
         self.y = self.y + input[0]*np.sin(self.theta)*self.ts
         self.theta = self.theta + self.ts * input[1]
         
-    def state(self)->np.array:
+    def state(self)->np.ndarray:
         return np.array([[self.x],[self.y],[self.theta]])
     
     def position(self)->np.array:

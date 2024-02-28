@@ -30,9 +30,6 @@ def main():
         ]
     
     estimator = TrilaterationEstimator(anchor_list)
-    # 二次計画法の重み設定
-    n = len(anchor_list)
-    
     
     for i in range(314):
         vehicle.step(np.array([0.2,0.2]))
@@ -42,8 +39,10 @@ def main():
             img = img + plt.plot(anchor.x,anchor.y,color="#000000",marker="o")
             distance = anchor.measure(vehicle.position())
             distance_list.append(distance)
-        
-        estimated_position = estimator.estimate(distance_list)
+        try:
+            estimated_position = estimator.estimate(distance_list)
+        except Exception as e:
+            continue
 
         for anchor,distance in zip(anchor_list, distance_list):
             distance_2d = np.sqrt(distance**2 - (anchor.z - vehicle.z)**2)
