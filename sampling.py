@@ -5,7 +5,7 @@ from vehicle import Vehicle
 from trilateration import TrilaterationEstimator
 
 """サンプリング
-    サンプリングして分散共分散行列を求めます
+    サンプリングして分散共分散行列と平均を求めます
 """
 
 def main():
@@ -32,8 +32,10 @@ def main():
         error_position = estimated_position - nominal_position
         error_history = np.hstack((error_history,error_position))
     covariant = np.cov(error_history)
+    mean = np.mean(error_history,axis=1)
     
     print(covariant)
+    print(mean)
     print(error_history.shape)
         
 #################################################
